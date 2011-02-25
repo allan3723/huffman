@@ -8,8 +8,8 @@ using namespace std;
 
 void compression();
 void decompression();
-void hufftree(linkedlist<frequency> list, char* in);
-void buildtable(node<frequency>* *codetable, int size, char* in);
+void hufftree(linkedlist<frequency> list, unsigned char* in, int strlen);
+void buildtable(node<frequency>* *codetable, int size, unsigned char* in, int strlen);
 bool decompress = false;
 
 int main(int argc, char* argv[])
@@ -29,6 +29,7 @@ void compression()
 {
   string input;
   char temp;
+  unsigned char temp2;
   linkedlist<frequency> freq;
   node<frequency>* current;
 
@@ -37,12 +38,13 @@ void compression()
     if (cin.peek() == -1)
       continue;
     cin.get(temp); 
-    input.insert(input.end(), temp);
-    current = freq.find(temp);
+    temp2 = temp;
+    input.insert(input.end(), temp2);
+    current = freq.find(temp2);
 
     if (current == NULL)
     {
-      frequency something(temp);
+      frequency something(temp2);
       freq.insert(something);
     }
     else
@@ -51,8 +53,11 @@ void compression()
     }
   }
 
-  char in[input.size()+1];
-  strcpy(in, input.c_str());
+  unsigned char in[input.size()+1];
+  for (int c = 0; c < input.size(); c++)
+    in[c] = input[c];
+//  strcpy(in, input.c_str());
+
   in[input.size()] = '\0';
   freq.qSort(0, freq.size()-1);
 
@@ -86,10 +91,10 @@ void compression()
       tempnode2 = tempnode2->next;
     }
   }
-  hufftree(freq, in);
+  hufftree(freq, in, input.size());
 }
 
-void hufftree(linkedlist<frequency> list, char* in)
+void hufftree(linkedlist<frequency> list, unsigned char* in, int strlen)
 { //transform into huffman tree
   
   node<frequency> *node1, *node2, *combo;
@@ -119,10 +124,10 @@ void hufftree(linkedlist<frequency> list, char* in)
     node1 = list.get(0);
   } //got tree
 
-  buildtable(codetable, i, in);//make table next;
+  buildtable(codetable, i, in, strlen);//make table next;
 }
 
-void buildtable(node<frequency>* *ctable, int size, char* in)
+void buildtable(node<frequency>* *ctable, int size, unsigned char* in, int strlen)
 { //since little endian code = reversed;
   node<frequency>* at;
   table ascii[256];
@@ -138,13 +143,11 @@ void buildtable(node<frequency>* *ctable, int size, char* in)
     while (at->top != NULL)
     {
       at = at->top;
-      if (!decompress)
-        ctable[i]->code.append(at->code);
+      ctable[i]->code.append(at->code);
 //      ctable[i]->code.insert(0, at->code);
     }
     ascii[ctable[i]->data.character].freq = ctable[i]->data.freq;
-    if (!decompress)
-      ascii[ctable[i]->data.character].code = ctable[i]->code;
+    ascii[ctable[i]->data.character].code = ctable[i]->code;
   }
 
   if (!decompress)
@@ -166,11 +169,9 @@ void buildtable(node<frequency>* *ctable, int size, char* in)
         
   }
 
-  i = 0;
-  while (in[i] != '\0')
+  for(i = 0; i < strlen; i++)
   {
     code.insert(0, ascii[in[i]].code);
-    i++;
   }
 
   int remainder = (code.size() % 8); //+2 for 0a
@@ -179,13 +180,13 @@ void buildtable(node<frequency>* *ctable, int size, char* in)
      code.insert(0, "0");
 
   unsigned char output = 0, tempo = 0;
-
+//cout << "code size = " << code.size() << endl;
   for (i = (code.size()/8) - 1; i >= 0; i--)
   {
     int k = 0;
     for (int j = 7; j >= 0; j--)
     {
-      if (code[k + (i*8)] == '1')
+      if (code[k + (i*8)] == '1') //<---SEGS HERE PROLLY
       {
         tempo = 1;
         tempo <<= j;
@@ -270,8 +271,8 @@ void decompression()
     }
   }
 
-  char* placeholder;
-  hufftree(defreq, placeholder);
+  unsigned char* placeholder;
+  hufftree(defreq, placeholder, 0);
 
 }
 

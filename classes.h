@@ -12,7 +12,7 @@ class node
     node<T>* top;
     string code;
 };
-
+/*
 template<class T>
 class treenode
 {
@@ -21,14 +21,14 @@ class treenode
     treenode<T>* left;
     treenode<T>* right;
 };
-
+*/
 class huffcode
 {
   public:
     int code;
     char character;
 };
-
+/*
 template<class T>
 class tree
 {
@@ -59,19 +59,19 @@ class tree
     treenode<T>* root, current, temp;
     int treesize;
 };
-
+*/
 class frequency
 {
   public:
     frequency() {freq = 0;}
-    frequency(char input)
+    frequency(unsigned char input)
     {
       freq = 1;
       character = input;
     }
 
     int freq;
-    char character;
+    unsigned char character;
 };
 
 class table
