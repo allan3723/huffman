@@ -118,7 +118,7 @@ void hufftree(linkedlist<frequency> list, unsigned char* in, int strlen)
     node2 = node1->next;  //lower priority
     combo = list.combine(node2, node1);
 
-    list.push(combo);
+    list.push(combo, node2);
     list.deletefirsttwo();
 
     node1 = list.get(0);

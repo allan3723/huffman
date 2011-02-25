@@ -171,9 +171,9 @@ class linkedlist
     return temp;
   }
 
-  void push(node<T>* insertn)
+  void push(node<T>* insertn, node<T>* low)
   {
-    temp = head;
+    temp = low;
 
     while (temp->next != NULL && insertn->data.freq > temp->data.freq)
       temp = temp->next;
