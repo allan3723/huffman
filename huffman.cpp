@@ -92,6 +92,17 @@ void compression()
     }
   }
 
+/*
+  node<frequency>* tempnode = new node<frequency>;
+  tempnode = freq.get(0);
+  for (int i = 0; i < freq.size(); i++)
+  {
+    cout << "freq = " << tempnode->data.freq << " char = " 
+         << (int)tempnode->data.character << endl;
+    tempnode = tempnode->next;
+  }
+*/
+
   hufftree(freq, input);
 }
 
@@ -118,17 +129,27 @@ void hufftree(linkedlist<frequency> list, string input)
   {
     node2 = node1->next;  //lower priority
     combo = list.combine(node2, node1);
+//cout << (int)node2->data.character << " + " << (int)node1->data.character << endl;
+//    list.deletefirsttwo();
     list.push(combo, node2);
     list.deletefirsttwo();
 
     node1 = list.get(0);
+/*    while (node1!= NULL)
+    {
+cout << (int) node1->data.character << " ";
+node1 = node1->next;
+    }
+node1 = list.get(0);
+cout << endl;
+*/
   } //got tree
 
   buildtable(codetable, i, input);//make table next;
 }
 
 void buildtable(node<frequency>* *ctable, int size, string input)
-{ //since little endian code = reversed;
+{
   node<frequency>* at;
   table ascii[256];
   int i;
@@ -167,8 +188,7 @@ void buildtable(node<frequency>* *ctable, int size, string input)
       byte = temp;
       bin = bin >> 8;
       cout << byte; 
-    }
-        
+    } 
   }
 
 string::iterator it;
@@ -185,7 +205,41 @@ string::iterator it;
 
   unsigned char output = 0, tempo = 0;
 
+int count = 0;
+string::iterator it2;
+unsigned char letter;
 
+  for (it = input.begin(); it != input.end(); it++)
+  {
+    letter = *it;
+//cout << (int)letter << "'s ascii code = " << ascii[letter].code << ": ";
+    for (it2 = --ascii[letter].code.end(); it2 >= ascii[letter].code.begin(); it2--)
+    {
+//cout << "it2 = " << *it2 << "\t";
+      if (*it2 == '1')
+      {
+//cout << "count = " << count << endl;
+        tempo = 1;
+        tempo <<= count;
+//cout << "tempo = " << (int) tempo << endl;
+        output = output | tempo;
+      }
+
+      count++;
+      if (count == 8)
+      {
+        cout << output;
+        count = 0;
+        output = 0;
+      }
+    }
+//cout << endl;
+  }
+
+  if (count != 8)
+    cout << output;
+
+/*
   for (i = (code.size()/8) - 1; i >= 0; i--)
   {
     int k = 0;
@@ -203,6 +257,7 @@ string::iterator it;
     cout << output;
     output = 0;
   }
+*/
   }
   else //decompress
   {

@@ -173,16 +173,17 @@ class linkedlist
 
   void push(node<T>* insertn, node<T>* low)
   {
-    temp = low;
+    temp = head;
 
     while (temp->next != NULL && insertn->data.freq > temp->data.freq)
       temp = temp->next;
 
     if (insertn->data.freq == temp->data.freq)
     {
-      while (temp->next != NULL && 
+      while (temp->next != NULL &&
+             insertn->data.freq == temp->data.freq &&
              insertn->data.character > temp->data.character)
-        temp = temp->next;
+        temp = temp->next;      
     }
 
     if (temp->next == NULL && insertn->data.freq >= temp->data.freq)
