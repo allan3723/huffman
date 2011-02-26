@@ -91,6 +91,7 @@ void compression()
       tempnode2 = tempnode2->next;
     }
   }
+
   hufftree(freq, input);
 }
 
@@ -117,7 +118,6 @@ void hufftree(linkedlist<frequency> list, string input)
   {
     node2 = node1->next;  //lower priority
     combo = list.combine(node2, node1);
-
     list.push(combo, node2);
     list.deletefirsttwo();
 
@@ -140,12 +140,14 @@ void buildtable(node<frequency>* *ctable, int size, string input)
   for (i = 0; i < size; i++)
   {
     at = ctable[i];
-    while (at->top != NULL)
+
+    while (at->top != NULL && at->top->top != NULL)
     {
       at = at->top;
       ctable[i]->code.append(at->code);
 //      ctable[i]->code.insert(0, at->code);
     }
+
     ascii[ctable[i]->data.character].freq = ctable[i]->data.freq;
     ascii[ctable[i]->data.character].code = ctable[i]->code;
   }

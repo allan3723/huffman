@@ -70,7 +70,7 @@ class frequency
       character = input;
     }
 
-    int freq;
+    unsigned int freq;
     unsigned char character;
 };
 
@@ -79,7 +79,7 @@ class table
   public:
     table() {freq = 0;}
     string code;
-    int freq;
+    unsigned int freq;
 };
 
 template<class T>
@@ -231,6 +231,7 @@ class linkedlist
     high->top = combo;
     combo->left = low;
     combo->right = high;
+    combo->top = NULL;
     combo->data.character = high->data.character; //takes highest priority
     combo->data.freq = low->data.freq + high->data.freq;
 
