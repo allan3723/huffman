@@ -10,6 +10,7 @@ void compression();
 void decompression();
 void hufftree(linkedlist<frequency> list, string);
 void buildtable(node<frequency>* *codetable, int size, string);
+void translate(linkedlist<frequency> tree, unsigned int totalchar);
 bool decompress = false;
 
 int main(int argc, char* argv[])
@@ -65,7 +66,7 @@ void compression()
   {
     node<frequency>* tempnode = new node<frequency>;
     node<frequency>* tempnode2 = new node<frequency>;
-    tempnode = freq.get(0);
+    tempnode = freq.gethead();
     tempnode2 = tempnode->next;
 
     for (int i = 0; i < freq.size()-2; i++)
@@ -111,7 +112,7 @@ void hufftree(linkedlist<frequency> list, string input)
   
   node<frequency> *node1, *node2, *combo;
   node<frequency>* codetable[list.size()];
-  node1 = list.get(0);  //higher priority
+  node1 = list.gethead();  //higher priority
   int i;
 
   for (i = 0; i < list.size(); i++)
@@ -120,7 +121,7 @@ void hufftree(linkedlist<frequency> list, string input)
     node1 = node1->next;
   }
 
-  node1 = list.get(0);
+  node1 = list.gethead();
 
   if (node1->next == NULL)
     node1->code.append("0");
@@ -145,7 +146,13 @@ cout << endl;
 */
   } //got tree
 
-  buildtable(codetable, i, input);//make table next;
+  if (!decompress)
+    buildtable(codetable, i, input);//make table next;
+  else
+  {
+    node1 = list.get(0);
+    translate(list, node1->data.freq);
+  }
 }
 
 void buildtable(node<frequency>* *ctable, int size, string input)
@@ -173,8 +180,6 @@ void buildtable(node<frequency>* *ctable, int size, string input)
     ascii[ctable[i]->data.character].code = ctable[i]->code;
   }
 
-  if (!decompress)
-  {
   cout << "HUFFMAN\0";
   byte = 0; //for \0
   cout << byte;
@@ -258,16 +263,6 @@ unsigned char letter;
     output = 0;
   }
 */
-  }
-  else //decompress
-  {
-    string code;
-    while (!cin.eof())
-    {
-      cin >> byte;
-      cout << byte;
-    } 
-  }
 }
 
 void decompression()
@@ -280,15 +275,32 @@ void decompression()
 
   for (int j = 0; j < 256; j++)
   {
+//if (j == 105)
+//{
+//  cout << endl;
+//  for (int k = 0; k < 12; k++)
+//  {
+//  cin >> bit;
+//  cout << k << " - " << (int)bit << endl;
+//  }
+//  return;
+//}  
+//cout << j << ": ";
     for (i = 0; i < 4; i++)
     {
       cin >> bit;
-      bit <<= (i*8);
-      byte = byte | bit;
+      bits = bit << (i*8);
+      byte = byte | bits;
+//cout << (int)bit << " ";
+//if (byte>0)
+//cout << i << "'s bit = " << (int)bit << " and bits = " << bits << endl;
     }
-
+//cout << "\t";
+//if (j%4 == 0)
+//cout << endl;
     if (byte > 0)
     {
+//cout << j << "'s byte = " << byte << endl;
       frequency data(j);
       data.freq = byte;
       defreq.insert(data);
@@ -304,7 +316,7 @@ void decompression()
   {
     node<frequency>* tempnode = new node<frequency>;
     node<frequency>* tempnode2 = new node<frequency>;
-    tempnode = defreq.get(0);
+    tempnode = defreq.gethead();
     tempnode2 = tempnode->next;
 
     for (int i = 0; i < defreq.size()-2; i++)
@@ -331,8 +343,67 @@ void decompression()
     }
   }
 
+/*
+  node<frequency>* tempnode = new node<frequency>;
+  tempnode = defreq.gethead();
+  for (int i = 0; i < defreq.size(); i++)
+  {
+    cout << "freq = " << tempnode->data.freq << " char = " 
+         << (int)tempnode->data.character << endl;
+    tempnode = tempnode->next;
+  }
+*/
   string placeholder;
   hufftree(defreq, placeholder);
 
 }
 
+void translate(linkedlist<frequency> tree, unsigned int totalchar)
+{
+  node<frequency>* root = new node<frequency>;
+  root = tree.gethead();
+  unsigned char byte;
+  unsigned int mask = 1, bit;
+  int i;
+
+//cout << totalchar <<endl;
+//return;
+  while (totalchar > 0)
+  {
+    cin >> byte;
+
+    for (i = 0; i < 8; i++)
+    {
+      if (totalchar == 0)
+        break;
+      bit = byte >> i;
+      bit = bit & mask;
+
+      if (bit == 1 && root->right != NULL)
+      {
+        root = root->right;
+//cout << bit;
+        if (root->right == NULL)
+        {
+          cout << root->data.character;
+          root = tree.gethead();
+          totalchar--;
+//cout << endl;
+        }
+      }
+      else if (bit == 0 && root->left != NULL)
+      {
+        root = root->left;
+//cout << bit;
+        if (root->left == NULL)
+        {
+          cout << root->data.character;
+          root = tree.gethead();
+          totalchar--;
+//cout << endl;
+        }
+      }
+    }
+  }
+  
+}

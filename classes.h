@@ -171,9 +171,11 @@ class linkedlist
     return temp;
   }
 
+  node<T>* gethead() { return head;}
+
   void push(node<T>* insertn, node<T>* low)
   {
-    temp = head;
+    temp = low;
 
     while (temp->next != NULL && insertn->data.freq > temp->data.freq)
       temp = temp->next;
@@ -277,12 +279,12 @@ class linkedlist
           temp2 = temp2->back;
           if (temp2->data.freq == pivot->data.freq) // && j != left)
             setFlag(true);
-if (temp2->data.freq > pivot->data.freq)
-{
+//if (temp2->data.freq > pivot->data.freq)
+//{
 //cout << "freq2: " << temp2->data.freq << " > " << pivot->data.freq << endl;
 //cout << "temp2 = " << temp2->data.character << " and pivot = "
 //     << pivot->data.character << endl;
-}
+//}
 
         } while(/*j > i*/ temp2->back != NULL && temp2->data.freq > pivot->data.freq);
 // cout << i << " < " << j << endl;
@@ -292,7 +294,8 @@ if (temp2->data.freq > pivot->data.freq)
       } while (i < j);
 
 //cout << "outside swap: " << pivot->data.character << " and " << temp2->data.character << endl;
-      swap(pivot, temp2);
+      if (pivot->data.freq != temp2->data.freq)
+        swap(pivot, temp2);
       qSort(left, j-1);
       qSort(j+1, right);
     }
