@@ -294,33 +294,22 @@ void decompression()
 
   for (int j = 0; j < 256; j++)
   {
-//if (j == 105)
-//{
-//  cout << endl;
-//  for (int k = 0; k < 12; k++)
-//  {
-//  cin >> bit;
-//  cout << k << " - " << (int)bit << endl;
-//  }
-//  return;
-//}  
 //cout << j << ": ";
     for (i = 0; i < 4; i++)
     {
       cin.get(temp);
       bit = temp;
+//cout << (int)bit << " ";
       bits = bit << (i*8);
       byte = byte | bits;
-//cout << (int)bit << " ";
-//if (byte>0)
-//cout << i << "'s bit = " << (int)bit << " and bits = " << bits << endl;
     }
-//cout << "\t";
-//if (j%4 == 0)
+//if ((j+3)%4 == 0)
 //cout << endl;
+//else
+//cout << "\t";
     if (byte > 0)
     {
-//cout << j << "'s byte = " << byte << endl;
+//cout << (unsigned char)j << "'s byte = " << byte << endl;
       frequency data(j);
       data.freq = byte;
       defreq.insert(data);
@@ -384,12 +373,13 @@ void translate(linkedlist<frequency> tree, unsigned int totalchar)
   unsigned char byte;
   unsigned int mask = 1, bit;
   int i;
-
+  char temp;
 //cout << totalchar <<endl;
 //return;
   while (totalchar > 0)
   {
-    cin >> byte;
+    cin.get(temp);
+    byte = temp;
 
     for (i = 0; i < 8; i++)
     {
