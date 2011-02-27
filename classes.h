@@ -26,7 +26,7 @@ class huffcode
 {
   public:
     int code;
-    char character;
+    unsigned char character;
 };
 /*
 template<class T>
@@ -126,7 +126,7 @@ class linkedlist
 
   int size() {return lsize;}
 
-  node<T>* find(char data)
+  node<T>* find(unsigned char data)
   {
     if (lsize == 0)
       return NULL;
@@ -180,18 +180,18 @@ class linkedlist
     while (temp->next != NULL && insertn->data.freq > temp->data.freq)
       temp = temp->next;
 
-    if (insertn->data.freq == temp->data.freq)
-    {
-      while (temp->next != NULL &&
-             insertn->data.freq == temp->data.freq &&
-             insertn->data.character > temp->data.character)
+//    if (insertn->data.freq == temp->data.freq)
+//    {
+      while (insertn->data.character > temp->data.character &&
+             insertn->data.freq == temp->data.freq && // <--------
+             temp->next != NULL)
         temp = temp->next;      
-    }
+//    }
 
     if (temp->next == NULL && insertn->data.freq >= temp->data.freq)
     {
       if (insertn->data.freq == temp->data.freq && insertn->data.character <
-          temp->data.character)
+          temp->data.character) 
       {
         temp->back->next = insertn;
         insertn->next = temp;
@@ -310,7 +310,7 @@ class linkedlist
       } while (i < j);
 
 //cout << "outside swap: " << pivot->data.character << " and " << temp2->data.character << endl;
-      if (pivot->data.freq != temp2->data.freq)
+//      if (pivot->data.freq != temp2->data.freq)
         swap(pivot, temp2);
       qSort(left, j-1);
       qSort(j+1, right);
@@ -338,13 +338,13 @@ class linkedlist
         {
           i++;
           temp1 = temp1->next;
-        } while(temp1->next != NULL && temp1->data.character < pivot->data.character);// && i < right);
+        } while(temp1->next != NULL && temp1->data.character < pivot->data.character);
 
         do
         {
           j--;
           temp2 = temp2->back;
-        } while(temp2->back != NULL && temp2->data.character > pivot->data.character); // && j >=i);
+        } while(temp2->back != NULL && temp2->data.character > pivot->data.character); 
         if (i < j) swap(temp1, temp2);
       } while (i < j);
 

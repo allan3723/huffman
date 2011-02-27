@@ -115,6 +115,17 @@ void hufftree(linkedlist<frequency> list)
     codetable[i] = node1;
     node1 = node1->next;
   }
+
+/*
+node1 = list.gethead();
+cout << "list size = " << list.size() << endl;
+while (node1 != NULL)
+{
+cout << (int)node1->data.character << ": " << node1->data.freq << "\t";
+node1 = node1->next;
+}
+cout << endl;
+return;*/
 /* 
   node1 = list.gethead();
   while (node1 != NULL)
@@ -139,7 +150,7 @@ void hufftree(linkedlist<frequency> list)
     list.push(combo, node2);
     list.deletefirsttwo();
 
-    node1 = list.get(0);
+    node1 = list.gethead();
 /*    while (node1!= NULL)
     {
 cout << (int) node1->data.character << " ";
@@ -154,7 +165,7 @@ cout << endl;
     buildtable(codetable, i);//make table next;
   else
   {
-    node1 = list.get(0);
+    node1 = list.gethead();
     translate(list, node1->data.freq);
   }
 }
@@ -248,7 +259,7 @@ unsigned char letter;
     }
   }
 
-  if (count != 8)
+  if (count%8 != 0)
     cout << output;
 
 /*
