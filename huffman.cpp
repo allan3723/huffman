@@ -285,6 +285,7 @@ unsigned char letter;
 
 void decompression()
 {
+  char temp;
   unsigned char test, bit;
   unsigned int i, bits, byte = 0;
   linkedlist<frequency> defreq;
@@ -306,7 +307,8 @@ void decompression()
 //cout << j << ": ";
     for (i = 0; i < 4; i++)
     {
-      cin >> bit;
+      cin.get(temp);
+      bit = temp;
       bits = bit << (i*8);
       byte = byte | bits;
 //cout << (int)bit << " ";
