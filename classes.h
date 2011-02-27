@@ -212,21 +212,31 @@ class linkedlist
       insertn->back = temp->back;
       temp->back = insertn;
     }
-
+/*
+    if (insertn->back != NULL && insertn->next != NULL)
+      cout << (int)insertn->back->data.character << "'s " << insertn->back->data.freq << " < " 
+      << (int)insertn->data.character << "'s " << insertn->data.freq << " < " 
+      << (int)insertn->next->data.character << "'s " << insertn->next->data.freq << endl;
+    else if (insertn->back == NULL && insertn->next != NULL)
+      cout << "NULL < " << insertn->data.freq << " < " << insertn->next->data.freq << endl;
+    else if (insertn->next == NULL && insertn->back != NULL)
+      cout << (int)insertn->back->data.character << "'s " << insertn->back->data.freq 
+      << " < " << (int)insertn->data.character << "'s " << insertn->data.freq << " < NULL" << endl;
+    else cout << "NULL AND " << insertn->data.freq << endl;
+*/
   }
 
   void deletefirsttwo()
   {
-    temp = head->next->next;
-//    delete head->next;
-//    delete head;
-    head = temp;
+//    temp = head->next->next;
+    head = head->next->next;
     head->back = NULL;
 
   }
 
   node<T>* combine(node<T>* low, node<T>* high)
   {
+
     node<T>* combo = new node<T>;
     low->code.append("0");
     low->top = combo;
@@ -235,7 +245,13 @@ class linkedlist
     combo->left = low;
     combo->right = high;
     combo->top = NULL;
-    combo->data.character = high->data.character; //takes highest priority
+
+    if (high->data.character > low->data.character)
+      combo->data.character = low->data.character;
+    else
+      combo->data.character = high->data.character;
+
+//    combo->data.character = high->data.character; //takes highest priority
     combo->data.freq = low->data.freq + high->data.freq;
 
     return combo;

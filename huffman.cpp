@@ -1,5 +1,6 @@
 // ache; Cheng, Allan
 
+#include <fstream>
 #include <iostream>
 using namespace std;
 #include <string>
@@ -8,8 +9,8 @@ using namespace std;
 
 void compression();
 void decompression();
-void hufftree(linkedlist<frequency> list, string);
-void buildtable(node<frequency>* *codetable, int size, string);
+void hufftree(linkedlist<frequency> list);
+void buildtable(node<frequency>* *codetable, int size);
 void translate(linkedlist<frequency> tree, unsigned int totalchar);
 bool decompress = false;
 
@@ -28,24 +29,24 @@ int main(int argc, char* argv[])
 
 void compression()
 {
-  string input;
-  char temp;
-  unsigned char temp2;
   linkedlist<frequency> freq;
   node<frequency>* current;
+  unsigned int length, streampos;
+  unsigned char temp;
 
-  while (!cin.eof())
+  cin.seekg(0, ios::end);
+  length = cin.tellg();
+  cin.seekg(0, ios::beg);
+
+  for (streampos = 1; streampos <= length; streampos++)
   {
-    if (cin.peek() == -1)
-      continue;
-    cin.get(temp); 
-    temp2 = temp;
-    input.insert(input.end(), temp2);
-    current = freq.find(temp2);
+    temp = cin.peek();
+    cin.seekg(streampos); 
+    current = freq.find(temp);
 
     if (current == NULL)
     {
-      frequency something(temp2);
+      frequency something(temp);
       freq.insert(something);
     }
     else
@@ -54,12 +55,6 @@ void compression()
     }
   }
 
-//  unsigned char in[input.size()+1];
-//  for (int c = 0; c < input.size(); c++)
-//    in[c] = input[c];
-//  strcpy(in, input.c_str());
-
-//  in[input.size()] = '\0';
   freq.qSort(0, freq.size()-1);
 
   if (freq.getFlag())
@@ -104,10 +99,10 @@ void compression()
   }
 */
 
-  hufftree(freq, input);
+  hufftree(freq);
 }
 
-void hufftree(linkedlist<frequency> list, string input)
+void hufftree(linkedlist<frequency> list)
 { //transform into huffman tree
   
   node<frequency> *node1, *node2, *combo;
@@ -120,6 +115,14 @@ void hufftree(linkedlist<frequency> list, string input)
     codetable[i] = node1;
     node1 = node1->next;
   }
+/* 
+  node1 = list.gethead();
+  while (node1 != NULL)
+  {
+    cout << "char: " << (int)node1->data.character << " is repeated " << node1->data.freq << " times\n";
+    node1 = node1->next;
+  }
+*/
 
   node1 = list.gethead();
 
@@ -130,7 +133,8 @@ void hufftree(linkedlist<frequency> list, string input)
   {
     node2 = node1->next;  //lower priority
     combo = list.combine(node2, node1);
-//cout << (int)node2->data.character << " + " << (int)node1->data.character << endl;
+//cout << (int)node2->data.character << " + " << (int)node1->data.character 
+//<< " - frequencies: " << node2->data.freq << " + " << node1->data.freq << endl;
 //    list.deletefirsttwo();
     list.push(combo, node2);
     list.deletefirsttwo();
@@ -147,7 +151,7 @@ cout << endl;
   } //got tree
 
   if (!decompress)
-    buildtable(codetable, i, input);//make table next;
+    buildtable(codetable, i);//make table next;
   else
   {
     node1 = list.get(0);
@@ -155,15 +159,13 @@ cout << endl;
   }
 }
 
-void buildtable(node<frequency>* *ctable, int size, string input)
+void buildtable(node<frequency>* *ctable, int size)
 {
   node<frequency>* at;
   table ascii[256];
   int i;
   unsigned char byte;
   unsigned int bin, temp, mask1 = 255;
-
-  string code;
 
   for (i = 0; i < size; i++)
   {
@@ -173,7 +175,6 @@ void buildtable(node<frequency>* *ctable, int size, string input)
     {
       at = at->top;
       ctable[i]->code.append(at->code);
-//      ctable[i]->code.insert(0, at->code);
     }
 
     ascii[ctable[i]->data.character].freq = ctable[i]->data.freq;
@@ -183,6 +184,11 @@ void buildtable(node<frequency>* *ctable, int size, string input)
   cout << "HUFFMAN\0";
   byte = 0; //for \0
   cout << byte;
+//cout << endl;
+//  for (i = 0; i < size; i++)
+//  {
+//    cout << (int)ctable[i]->data.character << "'s code is " << ctable[i]->code << endl;
+//  }
 
   for (i = 0; i < 256; i++)
   {
@@ -197,7 +203,7 @@ void buildtable(node<frequency>* *ctable, int size, string input)
   }
 
 string::iterator it;
-
+/*
   for(it = input.begin(); it != input.end(); it++)
   {
     code.insert(0, ascii[(unsigned char)*it].code);
@@ -207,26 +213,28 @@ string::iterator it;
   if (remainder != 0)
     for (i = 0; i < (8 - remainder); i++)
      code.insert(0, "0");
-
+*/
   unsigned char output = 0, tempo = 0;
 
-int count = 0;
+int count = 0, length;
 string::iterator it2;
+char sign;
 unsigned char letter;
 
-  for (it = input.begin(); it != input.end(); it++)
+  length = cin.tellg();
+  cin.seekg(0, ios::beg);
+
+  for (i = 0; i < length; i++)
   {
-    letter = *it;
-//cout << (int)letter << "'s ascii code = " << ascii[letter].code << ": ";
+    cin.get(sign);
+    letter = sign;
+
     for (it2 = --ascii[letter].code.end(); it2 >= ascii[letter].code.begin(); it2--)
     {
-//cout << "it2 = " << *it2 << "\t";
       if (*it2 == '1')
       {
-//cout << "count = " << count << endl;
         tempo = 1;
         tempo <<= count;
-//cout << "tempo = " << (int) tempo << endl;
         output = output | tempo;
       }
 
@@ -238,7 +246,6 @@ unsigned char letter;
         output = 0;
       }
     }
-//cout << endl;
   }
 
   if (count != 8)
@@ -353,8 +360,7 @@ void decompression()
     tempnode = tempnode->next;
   }
 */
-  string placeholder;
-  hufftree(defreq, placeholder);
+  hufftree(defreq);
 
 }
 
