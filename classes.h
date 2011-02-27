@@ -310,7 +310,7 @@ class linkedlist
       } while (i < j);
 
 //cout << "outside swap: " << pivot->data.character << " and " << temp2->data.character << endl;
-//      if (pivot->data.freq != temp2->data.freq)
+      if (pivot->data.freq != temp2->data.freq)
         swap(pivot, temp2);
       qSort(left, j-1);
       qSort(j+1, right);
